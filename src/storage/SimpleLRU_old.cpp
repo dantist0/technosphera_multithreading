@@ -31,6 +31,7 @@ bool SimpleLRU::PutIfAbsent(const std::string &key, const std::string &value) {
             
 
     lru_node *node = new lru_node(key, value);
+      
     
 	if (_lru_tail == nullptr)
         _lru_tail = node;
@@ -115,6 +116,7 @@ void SimpleLRU::_add_to_head(lru_node *node) {
         _lru_head = node;
         return;
 	}
+
     _lru_head->next = node;
     node->prev = std::unique_ptr<lru_node>(_lru_head);
     _lru_head = node;
@@ -127,19 +129,16 @@ void SimpleLRU::_remove_from_list(lru_node *node) {
 	if (next == nullptr && prev == nullptr) {
         _lru_head = nullptr;
         _lru_tail = nullptr;
-	} else if (next == nullptr) {
+	}else if (next == nullptr) {
         _lru_head = node->prev.get();
-        _lru_head->next = nullptr; //!!
-        node->prev = nullptr;
+        node->prev->next = nullptr;
     } else if (prev == nullptr) {
         _lru_tail = node->next;
-        _lru_tail->prev.release(); //!!
-        node->next = nullptr; //!!
+        node->next->prev = nullptr;
     } else {
         prev->next = next;
         next->prev.swap(prev);
         prev.release();
-        node->next = nullptr; //!!
     }
 }
 
