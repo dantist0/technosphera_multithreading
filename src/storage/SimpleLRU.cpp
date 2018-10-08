@@ -7,15 +7,18 @@ namespace Backend {
 
 // See MapBasedGlobalLockImpl.h
 bool SimpleLRU::Put(const std::string &key, const std::string &value) {
+    std::cout << "Put"<<std::endl;
     if (_lru_index.find(key) == _lru_index.end()) {
-        return PutIfAbsent(key, value);
+        return SimpleLRU::PutIfAbsent(key, value);
     } else {
-        return Set(key, value);
+        return SimpleLRU::Set(key, value);
 	}
 }
 
 // See MapBasedGlobalLockImpl.h
 bool SimpleLRU::PutIfAbsent(const std::string &key, const std::string &value) {
+    std::cout << "PutIfAbsent" << std::endl;
+
     if (_lru_index.find(key) != _lru_index.end())
         return false;
 
@@ -40,18 +43,21 @@ bool SimpleLRU::PutIfAbsent(const std::string &key, const std::string &value) {
 	_lru_index.insert(
             std::pair<std::reference_wrapper<const std::string>, std::reference_wrapper<lru_node>>(node->key, *node));
    
+	    std::cout << "PutIfAbsentEnd" << std::endl;
 
     return false;
 }
 
 // See MapBasedGlobalLockImpl.h
 bool SimpleLRU::Set(const std::string &key, const std::string &value) {
+
+	std::cout << "Set" << std ::endl;
     if (_lru_index.find(key) == _lru_index.end())
         return false;
 
-    Delete(key);
+    SimpleLRU::Delete(key);
 
-    return PutIfAbsent(key, value);
+    return SimpleLRU::PutIfAbsent(key, value);
 }
 
 // See MapBasedGlobalLockImpl.h
